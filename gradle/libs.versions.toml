@@ -21,7 +21,7 @@ logback = "1.5.3"                       # https://github.com/qos-ch/logback/tags
 mockk = "1.13.10"                       # https://github.com/mockk/mockk/releases
 mockito-kotlin = "5.2.1"                # https://github.com/mockito/mockito-kotlin/releases
 quartz-scheduler = "2.4.0-rc2"          # https://github.com/quartz-scheduler/quartz/releases
-prometheus = "1.12.3"                   # https://github.com/prometheus/client_java/releases
+prometheus = "1.12.4"                   # https://github.com/prometheus/client_java/releases
 swagger-generators = "3.0.54"           # https://github.com/swagger-api/swagger-codegen-generators/releases
 typesafe-config = "1.4.3"               # https://github.com/lightbend/config/releases
 

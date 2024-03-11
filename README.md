@@ -239,7 +239,14 @@ http://localhost:8080/v1/employees?page=0&size=10
 Pagination allows optionally to combine multiple sorting fields with corresponding directions.
 If a sort field does not have a direction, it will default to `ASC`.
 
-Examples:
+Syntax for sorting: `?sort=field1,direction1&sort=field2,direction2`
+Example: `sort=firstName&sort=maritalStatus,desc&sort=email,asc`
+
+To avoid ambiguity when sorting by multiple fields with may have the same across different tables,
+the field name can be prefixed with the table name separated by a dot.
+Example: `sort=contact.email,desc`
+
+Some more examples:
 
 * Page 0, 10 elements per page:
 

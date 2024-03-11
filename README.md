@@ -242,7 +242,7 @@ If a sort field does not have a direction, it will default to `ASC`.
 Syntax for sorting: `?sort=field1,direction1&sort=field2,direction2`
 Example: `sort=firstName&sort=maritalStatus,desc&sort=email,asc`
 
-To avoid ambiguity when sorting by multiple fields with may have the same across different tables,
+To avoid ambiguity when sorting by multiple fields which may have the same across different tables,
 the field name can be prefixed with the table name separated by a dot.
 Example: `sort=contact.email,desc`
 

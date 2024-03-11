@@ -254,7 +254,7 @@ Some more examples:
 
 * Page 0, 10 elements per page, sorted by first name ascending:
 
-http://localhost:8080/v1/employees?page=0&size=10&?sort=firstName,asc
+`GET` http://localhost:8080/v1/employees?page=0&size=10&?sort=firstName,asc
 
 * Page 0, 10 elements per page, sorted by first name ascending and marital status descending:
 

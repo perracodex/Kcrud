@@ -25,7 +25,6 @@ repositories {
 
 application {
     mainClass.set("")
-    project.setProperty("mainClassName", "")
 }
 
 dependencies {

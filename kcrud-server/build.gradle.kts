@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.graphql.expedia)
-    alias(libs.plugins.shadow)
 }
 
 group = "kcrud.server"
@@ -27,9 +26,6 @@ kotlin {
 
 application {
     mainClass.set("$group.ApplicationKt")
-
-    // Required by the shadow plugin to set the main class for the fat jar.
-    project.setProperty("mainClassName", "$group.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")

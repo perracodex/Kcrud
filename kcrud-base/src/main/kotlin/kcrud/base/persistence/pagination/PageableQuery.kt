@@ -47,17 +47,6 @@ fun Query.applyPagination(pageable: Pageable?): Query {
  *
  * Reflection is used to dynamically resolve column references from field names, and employing caching
  * to optimize this process reducing the overhead of repetitive reflection.
- *
- * The sorting logic accommodates scenarios involving multiple tables. If the sorting field specification
- * includes a table name (denoted by a field name prefixed with the table name and separated by a dot,
- * like "table.fieldName"), the sorting is applied specifically to the identified table and field.
- * This explicit specification prevents ambiguity and ensures accurate sorting when queries involve
- * multiple tables with potentially overlapping field names.
- *
- * If the field name does not include a table prefix, the function applies the sort order to the first
- * matching field found among the query's target tables. It's important to note that without specifying
- * table names, there might be ambiguity in queries targeting multiple tables with identical field names;
- * hence, prefixing field names with table names is recommended for clarity and precision.
  */
 private object QueryOrderingHelper {
 
@@ -74,21 +63,15 @@ private object QueryOrderingHelper {
      */
     fun applyOrder(query: Query, pageable: Pageable?) {
         pageable?.sort?.forEach { order ->
-            val (tableName, fieldName) = if (order.field.contains(".")) {
-                val parts: List<String> = order.field.split(".")
-                parts[0] to parts[1] // Split into table name and field name.
-            } else {
-                null to order.field // No table specified.
-            }
 
-            val column: Column<*> = if (tableName.isNullOrBlank()) {
+            val column: Column<*> = if (order.table.isNullOrBlank()) {
                 // No specific table, search among all targets.
-                getSortColumn(targets = query.targets, fieldName = fieldName)
+                getSortColumn(targets = query.targets, fieldName = order.field)
             } else {
                 // If a table name is specified, find the corresponding table from the query targets.
-                val table: Table = query.targets.firstOrNull { it.tableName.equals(tableName, ignoreCase = true) }
-                    ?: throw IllegalArgumentException("Invalid sort table: $tableName")
-                getSortColumn(targets = listOf(table), fieldName = fieldName)
+                val table: Table = query.targets.firstOrNull { it.tableName.equals(order.table, ignoreCase = true) }
+                    ?: throw IllegalArgumentException("Invalid sort table: ${order.table}")
+                getSortColumn(targets = listOf(table), fieldName = order.field)
             }
 
             val sortOrder: SortOrder = if (order.direction == Pageable.Direction.ASC) SortOrder.ASC else SortOrder.DESC

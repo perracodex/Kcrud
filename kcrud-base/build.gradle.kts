@@ -23,6 +23,11 @@ repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers") }
 }
 
+application {
+    mainClass.set("")
+    project.setProperty("mainClassName", "")
+}
+
 dependencies {
 
     implementation(libs.database.h2)

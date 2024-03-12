@@ -22,6 +22,7 @@ mockk = "1.13.10"                       # https://github.com/mockk/mockk/release
 mockito-kotlin = "5.2.1"                # https://github.com/mockito/mockito-kotlin/releases
 quartz-scheduler = "2.4.0-rc2"          # https://github.com/quartz-scheduler/quartz/releases
 prometheus = "1.12.4"                   # https://github.com/micrometer-metrics/micrometer/releases
+shadow = "8.1.1"                        # https://github.com/johnrengelman/shadow/releases
 swagger-generators = "3.0.54"           # https://github.com/swagger-api/swagger-codegen-generators/releases
 typesafe-config = "1.4.3"               # https://github.com/lightbend/config/releases
 
@@ -32,6 +33,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 graphql-expedia = { id = "com.expediagroup.graphql", version.ref = "graphql-exposed-server" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 
 
 [libraries]

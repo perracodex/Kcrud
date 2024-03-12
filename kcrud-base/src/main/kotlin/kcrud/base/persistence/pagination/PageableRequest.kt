@@ -70,7 +70,8 @@ fun ApplicationCall.getPageable(): Pageable? {
 
         when {
             sortSegments.isNotEmpty() -> {
-                val (tableName, fieldName) = parseTableAndField(sortSegments[FIELD_SEGMENT_INDEX])
+                val fieldSegment: String = sortSegments[FIELD_SEGMENT_INDEX]
+                val tableColumnPair: TableColumnPair = parseTableAndField(segment = fieldSegment)
 
                 val direction: Pageable.Direction = if (sortSegments.size >= 2) {
                     val directionString: String = sortSegments[DIRECTION_SEGMENT_INDEX]
@@ -83,7 +84,11 @@ fun ApplicationCall.getPageable(): Pageable? {
                     Pageable.Direction.ASC // Default direction.
                 }
 
-                Pageable.Sort(field = fieldName, table = tableName, direction = direction)
+                Pageable.Sort(
+                    table = tableColumnPair.table,
+                    field = tableColumnPair.field,
+                    direction = direction
+                )
             }
 
             else -> null // This case should never happen due to initial validation.
@@ -101,16 +106,25 @@ fun ApplicationCall.getPageable(): Pageable? {
  * Parses the table name and field name from a segment of a sort parameter.
  *
  * @param segment The segment of a sort parameter to parse the table and field names from.
- * @return A pair containing the table name and field name. The table name can be null if not specified.
+ * @return A [TableColumnPair] object containing the table and field names.
  */
-private fun parseTableAndField(segment: String): Pair<String?, String> {
+private fun parseTableAndField(segment: String): TableColumnPair {
     return if (segment.contains(FIELD_SEGMENT_DELIMITER)) {
         val fieldParts: List<String> = segment.split(FIELD_SEGMENT_DELIMITER)
-        fieldParts[TABLE_NAME_INDEX] to fieldParts[FIELD_NAME_INDEX] // Split into table name and field name.
+        TableColumnPair(table = fieldParts[TABLE_NAME_INDEX], field = fieldParts[FIELD_NAME_INDEX])
     } else {
-        null to segment // No table specified.
+        // No table specified.
+        TableColumnPair(table = null, field = segment)
     }
 }
+
+/**
+ * Represents a table and column name pair.
+ *
+ * @property table Optional name of the table the field belongs to. Used to avoid ambiguity.
+ * @property field The name of the field to sort by.
+ */
+private data class TableColumnPair(val table: String?, val field: String)
 
 private const val SORT_SEGMENT_DELIMITER: Char = ','
 private const val FIELD_SEGMENT_DELIMITER: Char = '.'

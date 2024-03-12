@@ -6,6 +6,7 @@
 
 package kcrud.base.persistence.pagination
 
+import kcrud.base.infrastructure.utils.Tracer
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.SortOrder
@@ -49,6 +50,7 @@ fun Query.applyPagination(pageable: Pageable?): Query {
  * to optimize this process reducing the overhead of repetitive reflection.
  */
 private object QueryOrderingHelper {
+    private val tracer = Tracer<QueryOrderingHelper>()
 
     // Cache storing column references with table class and column name as the key.
     // Used to optimize the reflection process of finding columns.
@@ -95,7 +97,7 @@ private object QueryOrderingHelper {
                 // Ignore and try the next table.
             }
         }
-        throw IllegalArgumentException("Invalid sort column: $fieldName")
+        throw IllegalArgumentException("Invalid sort column: '$fieldName'. Not found in any of the queried tables.")
     }
 
     /**
@@ -109,25 +111,35 @@ private object QueryOrderingHelper {
      */
     private fun findColumn(table: Table, fieldName: String): Column<*> {
         val tableClass: KClass<out Table> = table::class
-        val cacheKey: TableColumnKey = tableClass to fieldName.lowercase()
 
-        // Retrieve from cache or use reflection to find the column and cache it.
+        // Create a key to identify the column in the cache.
+        val cacheKey = TableColumnKey(tableClass = tableClass, fieldName = fieldName.lowercase())
+
+        // Try to get the column from the cache; if not found, search for it in the table.
         return columnCache.getOrPut(key = cacheKey) {
             tableClass.memberProperties
-                .firstOrNull {
-                    it.name.equals(other = fieldName, ignoreCase = true) &&
-                            it.returnType.classifier == Column::class
+                .firstOrNull { property ->
+                    // Look for a property in the table class that matches the field name and is a Column type.
+                    property.name.equals(other = fieldName, ignoreCase = true) &&
+                            property.returnType.classifier == Column::class
+                }?.also { column ->
+                    // Log a message if the column is found in the table.
+                    tracer.debug("Column found: '${column.name}' in table '${table.tableName}'.")
+                }?.getter?.call(table) as? Column<*> // Attempt to retrieve the Column property from the table.
+                ?: let {
+                    // If the column could not be retrieved then log a message and throw an exception.
+                    val traceMessage = "Column '$fieldName' not found in table '${table.tableName}'."
+                    tracer.debug(traceMessage)
+                    throw IllegalArgumentException(traceMessage)
                 }
-                ?.getter?.call(table) as? Column<*>
-                ?: throw IllegalArgumentException("Column '$fieldName' not found in table '${table.tableName}'")
         }
     }
 }
 
 /**
  * Represents a key for the column cache.
- * Contains the table class and column name.
- * Defined as a typealias for better readability.
- * The key is composed of the table class and column name.
+ *
+ * @param tableClass The class of the table containing the column.
+ * @param fieldName The name of the field representing the column.
  */
-private typealias TableColumnKey = Pair<KClass<*>, String>
+private data class TableColumnKey(val tableClass: KClass<*>, val fieldName: String)

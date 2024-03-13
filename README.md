@@ -54,7 +54,7 @@ as an educational side aspect.
 
 ## Project Structure
 
-**Kcrud** is structured as a Multi-Module project comprising four modules:
+**Kcrud** is structured as a Multi-Project comprising four modules:
 
 1. [kcrud-server](./kcrud-server) is the core application module, responsible for server initialization, and integration of all modules.
    It ensures the server's lifecycle management from startup to shut-down, making it central to the application's operation.

@@ -4,6 +4,7 @@ A [Ktor](https://ktor.io/) REST/GraphQL **CRUD** server.
 
 ### Characteristics:
 
+* [Multi-project](#project-structure) setup.
 * [Exposed](https://github.com/JetBrains/Exposed) database framework.
 * [Database Connection Pooling](./kcrud-base/src/main/kotlin/kcrud/base/database/service/DatabasePooling.kt) with [HikariCP ](https://github.com/brettwooldridge/HikariCP).
 * [Encryption](./kcrud-base/src/main/kotlin/kcrud/base/database/schema/contact/ContactTable.kt) at field level example.
